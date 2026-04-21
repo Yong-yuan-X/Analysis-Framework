@@ -1,0 +1,27 @@
+# Python cache and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local environment files
+.env
+.DS_Store
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Runtime outputs
+logs/
+data/processed/
+data/interim/
+
+# Local-only data files
+data/external/
+

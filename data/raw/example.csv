@@ -1,0 +1,7 @@
+id,age,income,score,city
+1,25,5000,80,Shanghai
+2,30,6200,88,Beijing
+3,,5800,91,Shenzhen
+4,28,,85,Guangzhou
+5,35,7100,93,Hangzhou
+
