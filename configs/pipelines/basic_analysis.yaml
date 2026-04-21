@@ -1,0 +1,29 @@
+{
+  "name": "basic_analysis",
+  "input": {
+    "type": "csv",
+    "path": "data/raw/example.csv"
+  },
+  "steps": [
+    {
+      "name": "missing_values",
+      "enabled": true,
+      "params": {
+        "strategy": "mean"
+      }
+    },
+    {
+      "name": "descriptive_stats",
+      "enabled": true
+    },
+    {
+      "name": "correlation",
+      "enabled": true
+    }
+  ],
+  "output": {
+    "save_processed": true,
+    "save_report": true,
+    "dir": "data/processed"
+  }
+}

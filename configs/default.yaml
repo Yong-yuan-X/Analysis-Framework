@@ -1,0 +1,11 @@
+{
+  "project": {
+    "name": "analysis-framework"
+  },
+  "runtime": {
+    "log_level": "INFO",
+    "save_processed": true,
+    "save_report": true,
+    "output_dir": "data/processed"
+  }
+}
