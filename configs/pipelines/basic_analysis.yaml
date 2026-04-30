@@ -17,6 +17,16 @@
       "enabled": true
     },
     {
+      "name": "categorical_frequency",
+      "enabled": true,
+      "params": {
+        "columns": [
+          "city"
+        ],
+        "top_n": 3
+      }
+    },
+    {
       "name": "correlation",
       "enabled": true
     }
