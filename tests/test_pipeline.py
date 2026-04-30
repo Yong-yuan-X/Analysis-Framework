@@ -14,8 +14,13 @@ def test_pipeline_runs_end_to_end(tmp_path):
     register_builtin_algorithms(registry)
     result = PipelineRunner(registry).run(config)
 
-    assert result.executed_steps == ["missing_values", "descriptive_stats", "correlation"]
+    assert result.executed_steps == [
+        "missing_values",
+        "descriptive_stats",
+        "categorical_frequency",
+        "correlation",
+    ]
     assert (tmp_path / "processed.csv").exists()
     report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
     assert report["pipeline"] == "basic_analysis"
-
+    assert report["artifacts"]["categorical_frequency"]["city"]["unique"] == 5
