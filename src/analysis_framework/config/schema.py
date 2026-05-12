@@ -10,8 +10,8 @@ def validate_config(config: dict) -> None:
         raise ConfigError("Missing required non-empty 'steps' list.")
 
     input_config = config["input"]
-    if input_config.get("type") != "csv":
-        raise ConfigError("MVP currently supports only input.type = 'csv'.")
+    if input_config.get("type") not in {"csv", "json", "xlsx", "sqlite"}:
+        raise ConfigError("Supported input.type values are: 'csv', 'json', 'xlsx', 'sqlite'.")
     if not input_config.get("path"):
         raise ConfigError("input.path is required.")
 

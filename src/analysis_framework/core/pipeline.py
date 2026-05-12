@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 from analysis_framework.core.result import PipelineResult
-from analysis_framework.dataio.readers import read_csv
+from analysis_framework.dataio.readers import read_input_data
 from analysis_framework.dataio.writers import write_csv, write_json
 from analysis_framework.exceptions import PipelineError
 from analysis_framework.registry import AlgorithmRegistry
@@ -15,9 +15,10 @@ class PipelineRunner:
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def run(self, config: dict) -> PipelineResult:
-        input_path = config["input"]["path"]
+        input_config = config["input"]
+        input_path = input_config["path"]
         try:
-            data = read_csv(input_path)
+            data = read_input_data(input_config)
         except Exception as exc:
             if isinstance(exc, PipelineError):
                 raise
