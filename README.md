@@ -10,7 +10,8 @@ This document describes the current local version of the project. It reflects wh
 
 This repository is already a minimal runnable data analysis framework `MVP` with support for:
 
-- reading raw `CSV` data
+- reading raw `CSV`, `JSON`, `XLSX`, and `SQLite` data
+- normalizing input data into a JSON-compatible row format before algorithms run
 - defining analysis pipelines through configuration files
 - executing built-in algorithms step by step
 - writing processed output data files
@@ -39,10 +40,12 @@ Analysis-Framework/
 ├── configs/
 │   ├── default.yaml
 │   └── pipelines/
-│       └── basic_analysis.yaml
+│       ├── basic_analysis.yaml
+│       └── json_analysis.yaml
 ├── data/
 │   ├── raw/
-│   │   └── example.csv
+│   │   ├── example.csv
+│   │   └── example.json
 │   └── processed/
 │       ├── processed.csv
 │       └── report.json
@@ -120,13 +123,19 @@ Analysis-Framework/
 - `pipelines/basic_analysis.yaml`
   Runnable configuration for the current basic analysis pipeline.
 
+- `pipelines/json_analysis.yaml`
+  Runnable configuration that uses the same pipeline steps with `JSON` input.
+
 Note:
 Although these files use the `.yaml` extension, the current content is written in a `JSON`-compatible format so it can still run in environments without `PyYAML`.
 
 ### `data/`
 
 - `data/raw/example.csv`
-  Raw input data.
+  Raw input data in `CSV` format.
+
+- `data/raw/example.json`
+  Raw input data in normalized `JSON` row format.
 
 - `data/processed/processed.csv`
   Processed output data produced by the pipeline.
@@ -174,7 +183,7 @@ This is the core framework code.
   Defines the pipeline result object.
 
 - `dataio/readers.py`
-  Reads `CSV` data.
+  Reads `CSV`, `JSON`, `XLSX`, and `SQLite` input data, then normalizes it into a JSON-compatible list of row objects for the pipeline.
 
 - `dataio/writers.py`
   Writes `CSV` and `JSON` output files.
@@ -193,12 +202,25 @@ This is the core framework code.
 
 ## Implemented Features
 
-### 1. CSV Data Loading
+### 1. CSV, JSON, XLSX, and SQLite Data Loading
 
-The framework currently supports loading raw data from `CSV` files such as:
+The framework currently supports loading raw data from `CSV`, `JSON`, `XLSX`, and `SQLite` sources such as:
 
 ```text
 data/raw/example.csv
+data/raw/example.json
+local/path/example.xlsx
+local/path/example.sqlite
+```
+
+All supported input formats are normalized into the same internal structure before the pipeline runs:
+
+```json
+[
+  {
+    "column": "value"
+  }
+]
 ```
 
 ### 2. Configuration-Driven Pipeline Execution
@@ -212,6 +234,7 @@ configs/pipelines/basic_analysis.yaml
 This configuration defines:
 
 - the input file path
+- the input file type, currently `csv`, `json`, `xlsx`, or `sqlite`
 - which steps to run
 - whether each step is enabled
 - the parameters for each step
@@ -327,17 +350,23 @@ python3 scripts/run_pipeline.py list-algorithms
 python3 scripts/run_pipeline.py run --config configs/pipelines/basic_analysis.yaml
 ```
 
+To run the same analysis flow with `JSON` input:
+
+```bash
+python3 scripts/run_pipeline.py run --config configs/pipelines/json_analysis.yaml
+```
+
 ### Inspect the Results
 
 After running, you will have:
 
-- [example.csv](/Users/a1-6/Analysis-Framework/data/raw/example.csv)
+- [example.csv](/Users/a1-6/Analysis-Framework/data/raw/example.csv) or [example.json](/Users/a1-6/Analysis-Framework/data/raw/example.json)
 - [processed.csv](/Users/a1-6/Analysis-Framework/data/processed/processed.csv)
 - [report.json](/Users/a1-6/Analysis-Framework/data/processed/report.json)
 
 Their relationship is:
 
-- `example.csv` is the raw data
+- `example.csv` or `example.json` is the raw data
 - `processed.csv` is the processed data
 - `report.json` is the analysis summary
 
@@ -358,7 +387,7 @@ python3 -m pytest -q
 
 This is still a minimal version, with the following limitations:
 
-- only `CSV` input is supported
+- only `CSV`, row-oriented `JSON`, basic `XLSX`, and `SQLite` input are supported
 - there are only 4 built-in algorithms
 - descriptive statistics are still basic
 - there is no visualization output yet
@@ -372,4 +401,4 @@ Suitable next steps for the project include:
 2. median, standard deviation, and quantiles
 3. normalization / standardization
 4. outlier detection
-5. Excel / JSON input support
+5. broader database and API input support

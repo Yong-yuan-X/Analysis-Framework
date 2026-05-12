@@ -10,7 +10,8 @@
 
 这个仓库现在已经是一个最小可运行的数据分析框架 `MVP`，支持：
 
-- 读取 `CSV` 原始数据
+- 读取 `CSV`、`JSON`、`XLSX` 和 `SQLite` 原始数据
+- 在算法执行前，将输入数据统一规范为 JSON 兼容的行对象格式
 - 通过配置文件定义分析流程
 - 按步骤执行内置算法
 - 输出处理后的数据文件
@@ -42,7 +43,8 @@ Analysis-Framework/
 │       └── basic_analysis.yaml
 ├── data/
 │   ├── raw/
-│   │   └── example.csv
+│   │   ├── example.csv
+│   │   └── example.json
 │   └── processed/
 │       ├── processed.csv
 │       └── report.json
@@ -126,7 +128,10 @@ Analysis-Framework/
 ### `data/`
 
 - `data/raw/example.csv`
-  原始输入数据。
+  `CSV` 格式的原始输入数据。
+
+- `data/raw/example.json`
+  已规范成行对象结构的 `JSON` 原始输入数据。
 
 - `data/processed/processed.csv`
   流程执行后的处理结果数据。
@@ -174,7 +179,7 @@ Analysis-Framework/
   定义 pipeline 的结果对象。
 
 - `dataio/readers.py`
-  读取 `CSV` 数据。
+  读取 `CSV`、`JSON`、`XLSX` 和 `SQLite` 数据，并统一转换为 JSON 兼容的行对象列表供流程使用。
 
 - `dataio/writers.py`
   输出 `CSV` 和 `JSON` 文件。
@@ -193,12 +198,25 @@ Analysis-Framework/
 
 ## 当前已完成功能
 
-### 1. CSV 数据读取
+### 1. CSV、JSON、XLSX 和 SQLite 数据读取
 
-当前支持从 `CSV` 文件读取原始数据，例如：
+当前支持从 `CSV`、`JSON`、`XLSX` 和 `SQLite` 数据源读取原始数据，例如：
 
 ```text
 data/raw/example.csv
+data/raw/example.json
+local/path/example.xlsx
+local/path/example.sqlite
+```
+
+所有支持的输入格式都会先规范成同一种内部结构，再进入后续算法流程：
+
+```json
+[
+  {
+    "column": "value"
+  }
+]
 ```
 
 ### 2. 配置驱动流程执行
@@ -327,17 +345,23 @@ python3 scripts/run_pipeline.py list-algorithms
 python3 scripts/run_pipeline.py run --config configs/pipelines/basic_analysis.yaml
 ```
 
+如果要使用 `JSON` 输入运行同一套分析流程：
+
+```bash
+python3 scripts/run_pipeline.py run --config configs/pipelines/json_analysis.yaml
+```
+
 ### 查看结果
 
 运行后会得到：
 
-- [example.csv](/Users/a1-6/Analysis-Framework/data/raw/example.csv)
+- [example.csv](/Users/a1-6/Analysis-Framework/data/raw/example.csv) 或 [example.json](/Users/a1-6/Analysis-Framework/data/raw/example.json)
 - [processed.csv](/Users/a1-6/Analysis-Framework/data/processed/processed.csv)
 - [report.json](/Users/a1-6/Analysis-Framework/data/processed/report.json)
 
 它们的关系是：
 
-- `example.csv` 是原始数据
+- `example.csv` 或 `example.json` 是原始数据
 - `processed.csv` 是处理后的数据
 - `report.json` 是分析摘要
 
@@ -358,7 +382,7 @@ python3 -m pytest -q
 
 这还是一个最小版本，目前有这些限制：
 
-- 只支持 `CSV` 输入
+- 目前只支持 `CSV`、行对象结构的 `JSON`、基础 `XLSX` 和 `SQLite` 输入
 - 内置算法只有 4 个
 - 描述性统计结果还比较基础
 - 目前没有可视化输出
@@ -372,4 +396,4 @@ python3 -m pytest -q
 2. 中位数、标准差、分位数
 3. 标准化 / 归一化
 4. 异常值检测
-5. Excel / JSON 数据输入支持
+5. 更多数据库和 API 数据输入支持

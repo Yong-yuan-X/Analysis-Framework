@@ -24,4 +24,5 @@ data/interim/
 
 # Local-only data files
 data/external/
+test/
 

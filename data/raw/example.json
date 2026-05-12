@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "age": "25",
+    "income": "5000",
+    "score": "80",
+    "city": "Shanghai"
+  },
+  {
+    "id": "2",
+    "age": "30",
+    "income": "6200",
+    "score": "88",
+    "city": "Beijing"
+  },
+  {
+    "id": "3",
+    "age": "",
+    "income": "5800",
+    "score": "91",
+    "city": "Shenzhen"
+  },
+  {
+    "id": "4",
+    "age": "28",
+    "income": "",
+    "score": "85",
+    "city": "Guangzhou"
+  },
+  {
+    "id": "5",
+    "age": "35",
+    "income": "7100",
+    "score": "93",
+    "city": "Hangzhou"
+  }
+]
