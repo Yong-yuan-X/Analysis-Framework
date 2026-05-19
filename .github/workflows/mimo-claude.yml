@@ -41,7 +41,7 @@ jobs:
           settings: |
             {
               "env": {
-                "ANTHROPIC_BASE_URL": "https://api.xiaomimimo.com/anthropic",
+                "ANTHROPIC_BASE_URL": "https://token-plan-sgp.xiaomimimo.com/anthropic",
                 "ANTHROPIC_AUTH_TOKEN": "${{ secrets.MIMO_API_KEY }}",
                 "ANTHROPIC_DEFAULT_SONNET_MODEL": "MiMo-V2.5-Pro",
                 "ANTHROPIC_DEFAULT_OPUS_MODEL": "MiMo-V2.5-Pro",
