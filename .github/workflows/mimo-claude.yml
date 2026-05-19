@@ -53,3 +53,58 @@ jobs:
           claude_args: |
             --model mimo-v2.5-pro
             --max-turns 50
+
+      - name: Create PR from Claude branch
+        if: success() && github.event_name == 'issue_comment' && !github.event.issue.pull_request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          BRANCH=$(git ls-remote --heads origin "claude/issue-${ISSUE_NUMBER}-*" \
+            | awk '{print $2}' \
+            | sed 's#refs/heads/##' \
+            | sort \
+            | tail -n 1)
+
+          if [ -z "$BRANCH" ]; then
+            echo "No Claude branch found for issue #${ISSUE_NUMBER}"
+            exit 0
+          fi
+
+          EXISTING_PR=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --head "$BRANCH" \
+            --state open \
+            --json number \
+            --jq '.[0].number // ""')
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #${EXISTING_PR} already exists for ${BRANCH}"
+            exit 0
+          fi
+
+          BODY_FILE="${RUNNER_TEMP}/claude-pr-body.md"
+          cat > "$BODY_FILE" <<EOF
+          ## Summary
+
+          Implements #${ISSUE_NUMBER} using Claude/MiMo.
+
+          ## Testing
+
+          See Claude's issue comment and workflow logs.
+
+          ## Review Notes
+
+          Please review the diff before merging.
+
+          Closes #${ISSUE_NUMBER}
+          EOF
+
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base "$DEFAULT_BRANCH" \
+            --head "$BRANCH" \
+            --title "Fix #${ISSUE_NUMBER}: ${ISSUE_TITLE}" \
+            --body-file "$BODY_FILE"
