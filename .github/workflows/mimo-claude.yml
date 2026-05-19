@@ -43,11 +43,11 @@ jobs:
               "env": {
                 "ANTHROPIC_BASE_URL": "https://api.xiaomimimo.com/anthropic",
                 "ANTHROPIC_AUTH_TOKEN": "${{ secrets.MIMO_API_KEY }}",
-                "ANTHROPIC_DEFAULT_SONNET_MODEL": "mimo-v2-flash",
-                "ANTHROPIC_DEFAULT_OPUS_MODEL": "mimo-v2-flash",
-                "ANTHROPIC_DEFAULT_HAIKU_MODEL": "mimo-v2-flash"
+                "ANTHROPIC_DEFAULT_SONNET_MODEL": "MiMo-V2.5-Pro",
+                "ANTHROPIC_DEFAULT_OPUS_MODEL": "MiMo-V2.5-Pro",
+                "ANTHROPIC_DEFAULT_HAIKU_MODEL": "MiMo-V2.5-Pro"
               }
             }
           claude_args: |
-            --model mimo-v2-flash
+            --model MiMo-V2.5-Pro
             --max-turns 5
