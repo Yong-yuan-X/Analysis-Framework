@@ -383,6 +383,20 @@ Verified locally with:
 python3 -m pytest -q
 ```
 
+## Health Check
+
+To verify your project setup is working correctly:
+
+```bash
+python3 -c "import analysis_framework; print('Package imported successfully')"
+```
+
+Or run the existing tests:
+
+```bash
+python3 -m pytest -q
+```
+
 ## Current Limitations
 
 This is still a minimal version, with the following limitations:
