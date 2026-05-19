@@ -50,4 +50,4 @@ jobs:
             }
           claude_args: |
             --model mimo-v2.5-pro
-            --max-turns 5
+            --max-turns 15
