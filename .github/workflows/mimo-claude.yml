@@ -8,7 +8,7 @@ on:
   pull_request_review:
     types: [submitted]
   issues:
-    types: [opened, assigned, labeled]
+    types: [opened]
 
 jobs:
   claude:
@@ -55,7 +55,7 @@ jobs:
             --max-turns 50
 
       - name: Create PR from Claude branch
-        if: success() && github.event_name == 'issue_comment' && !github.event.issue.pull_request
+        if: success() && (github.event_name == 'issue_comment' || github.event_name == 'issues') && !github.event.issue.pull_request
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
@@ -87,8 +87,7 @@ jobs:
 
           CLAUDE_REPORT_FILE="${RUNNER_TEMP}/claude-execution-report.md"
 
-          gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUMBER}/comments" \
-            --paginate \
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUMBER}/comments?per_page=100" \
             --jq '[.[] | select(.user.login == "claude")][-1].body // ""' \
             > "$CLAUDE_REPORT_FILE"
 
