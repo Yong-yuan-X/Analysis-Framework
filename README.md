@@ -2,340 +2,47 @@
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-This is a data analysis framework that includes a set of common algorithms and standardized workflows. Users can customize and adjust algorithms, and toggle them on or off as needed, providing a flexible, modular approach to data processing tasks.
+A lightweight local tool for profiling tabular datasets and generating structured analysis reports. Load your data, run a configurable pipeline, and get quality checks, summary statistics, and a clean JSON report — all from the command line.
 
-This document describes the current local version of the project. It reflects what is already implemented and runnable in the repository today, not a future roadmap draft.
+This document describes the current local version of the project. It reflects what is already implemented and runnable in the repository today.
 
-## Current Status
+## What It Does
 
-This repository is already a minimal runnable data analysis framework `MVP` with support for:
+- **Data quality checks** — detect and fill missing values
+- **Basic statistics** — descriptive stats (count, min, max, mean) for numeric columns
+- **Categorical profiling** — frequency distribution for categorical columns
+- **Correlation analysis** — Pearson correlation between numeric columns
+- **Configurable pipelines** — define which analysis steps to run via YAML config files
+- **Structured reports** — outputs a JSON summary report alongside processed CSV data
 
-- reading raw `CSV`, `JSON`, `XLSX`, and `SQLite` data
-- normalizing input data into a JSON-compatible row format before algorithms run
-- defining analysis pipelines through configuration files
-- executing built-in algorithms step by step
-- writing processed output data files
-- writing summary `JSON` analysis reports
-- running from the command line, validating configs, and listing available algorithms
+## Supported Input Formats
 
-The framework currently includes 4 built-in algorithms:
+CSV, JSON, XLSX, and SQLite. All inputs are normalized into a consistent row format before the pipeline runs.
 
-1. `missing_values`
-2. `descriptive_stats`
-3. `categorical_frequency`
-4. `correlation`
+## Quick Start
 
-## Current Directory Structure
-
-```text
-Analysis-Framework/
-├── README.md
-├── README.zh-CN.md
-├── README.zh-HK.md
-├── LICENSE
-├── pyproject.toml
-├── requirements.txt
-├── .env.example
-├── main.py
-├── configs/
-│   ├── default.yaml
-│   └── pipelines/
-│       ├── basic_analysis.yaml
-│       └── json_analysis.yaml
-├── data/
-│   ├── raw/
-│   │   ├── example.csv
-│   │   └── example.json
-│   └── processed/
-│       ├── processed.csv
-│       └── report.json
-├── examples/
-│   └── run_basic_analysis.py
-├── scripts/
-│   ├── run_pipeline.py
-│   └── validate_config.py
-├── tests/
-│   ├── conftest.py
-│   ├── test_pipeline.py
-│   └── test_registry.py
-└── src/
-    └── analysis_framework/
-        ├── __init__.py
-        ├── cli.py
-        ├── constants.py
-        ├── exceptions.py
-        ├── logging.py
-        ├── registry.py
-        ├── config/
-        │   ├── __init__.py
-        │   ├── loader.py
-        │   └── schema.py
-        ├── core/
-        │   ├── __init__.py
-        │   ├── base.py
-        │   ├── pipeline.py
-        │   └── result.py
-        ├── dataio/
-        │   ├── __init__.py
-        │   ├── readers.py
-        │   └── writers.py
-        └── algorithms/
-            ├── __init__.py
-            ├── preprocessing/
-            │   ├── __init__.py
-            │   └── missing_values.py
-            └── statistics/
-                ├── __init__.py
-                ├── correlation.py
-                └── descriptive.py
-```
-
-## What Each Part Does
-
-### Root Directory
-
-- `README.md`
-  Default English project overview.
-
-- `README.zh-CN.md`
-  Simplified Chinese project overview.
-
-- `README.zh-HK.md`
-  Traditional Chinese project overview.
-
-- `pyproject.toml`
-  Python project configuration, including package metadata and CLI entry points.
-
-- `requirements.txt`
-  Dependency list.
-
-- `.env.example`
-  Example local environment variables.
-
-- `main.py`
-  A simple welcome entry point that is not part of the main workflow yet.
-
-### `configs/`
-
-- `default.yaml`
-  Default configuration example.
-
-- `pipelines/basic_analysis.yaml`
-  Runnable configuration for the current basic analysis pipeline.
-
-- `pipelines/json_analysis.yaml`
-  Runnable configuration that uses the same pipeline steps with `JSON` input.
-
-Note:
-Although these files use the `.yaml` extension, the current content is written in a `JSON`-compatible format so it can still run in environments without `PyYAML`.
-
-### `data/`
-
-- `data/raw/example.csv`
-  Raw input data in `CSV` format.
-
-- `data/raw/example.json`
-  Raw input data in normalized `JSON` row format.
-
-- `data/processed/processed.csv`
-  Processed output data produced by the pipeline.
-
-- `data/processed/report.json`
-  Summary report for the pipeline execution.
-
-The relationship is:
-
-- `raw` is the input
-- `processed.csv` is the output data
-- `report.json` is the output report
-
-### `scripts/`
-
-- `scripts/run_pipeline.py`
-  Main execution entry point.
-
-- `scripts/validate_config.py`
-  Configuration validation entry point.
-
-### `src/analysis_framework/`
-
-This is the core framework code.
-
-- `cli.py`
-  Command-line parsing for `run`, `validate`, and `list-algorithms`.
-
-- `registry.py`
-  Algorithm registry responsible for registering and instantiating algorithms.
-
-- `config/loader.py`
-  Loads configuration files.
-
-- `config/schema.py`
-  Validates whether a configuration is legal.
-
-- `core/base.py`
-  Base class definition for algorithms.
-
-- `core/pipeline.py`
-  Pipeline orchestration core that runs algorithms in configured order.
-
-- `core/result.py`
-  Defines the pipeline result object.
-
-- `dataio/readers.py`
-  Reads `CSV`, `JSON`, `XLSX`, and `SQLite` input data, then normalizes it into a JSON-compatible list of row objects for the pipeline.
-
-- `dataio/writers.py`
-  Writes `CSV` and `JSON` output files.
-
-- `algorithms/preprocessing/missing_values.py`
-  Missing-value handling algorithm.
-
-- `algorithms/statistics/descriptive.py`
-  Descriptive statistics algorithm.
-
-- `algorithms/statistics/frequency.py`
-  Categorical frequency statistics algorithm.
-
-- `algorithms/statistics/correlation.py`
-  Correlation analysis algorithm.
-
-## Implemented Features
-
-### 1. CSV, JSON, XLSX, and SQLite Data Loading
-
-The framework currently supports loading raw data from `CSV`, `JSON`, `XLSX`, and `SQLite` sources such as:
-
-```text
-data/raw/example.csv
-data/raw/example.json
-local/path/example.xlsx
-local/path/example.sqlite
-```
-
-All supported input formats are normalized into the same internal structure before the pipeline runs:
-
-```json
-[
-  {
-    "column": "value"
-  }
-]
-```
-
-### 2. Configuration-Driven Pipeline Execution
-
-The current pipeline is controlled by a configuration file. An example is available at:
-
-```text
-configs/pipelines/basic_analysis.yaml
-```
-
-This configuration defines:
-
-- the input file path
-- the input file type, currently `csv`, `json`, `xlsx`, or `sqlite`
-- which steps to run
-- whether each step is enabled
-- the parameters for each step
-- the output directory
-
-### 3. Missing Value Handling Algorithm `missing_values`
-
-Purpose:
-Handle empty values in the raw data to reduce downstream analysis errors.
-
-Currently supported strategy:
-
-- `mean`
-
-In the sample data:
-
-- `age` has missing values
-- `income` has missing values
-
-After running the pipeline, those values are filled with the column mean.
-
-### 4. Descriptive Statistics Algorithm `descriptive_stats`
-
-Purpose:
-Generate basic statistical summaries for numeric columns.
-
-Current output metrics include:
-
-- `count`
-- `min`
-- `max`
-- `mean`
-
-### 5. Categorical Frequency Algorithm `categorical_frequency`
-
-Purpose:
-Summarize value frequencies for categorical columns to help identify common categories and basic data distribution.
-
-Current output includes:
-
-- `total`: number of non-empty values in the column
-- `unique`: number of distinct values
-- `top_values`: the most common values with count and ratio
-
-By default, the sample pipeline analyzes the `city` column and keeps the top `3` values.
-
-### 6. Correlation Analysis Algorithm `correlation`
-
-Purpose:
-Compute Pearson correlation coefficients between numeric columns to help observe linear relationships.
-
-Interpretation:
-
-- close to `1`: strong positive correlation
-- close to `0`: weak correlation
-- close to `-1`: strong negative correlation
-
-### 7. Processed Data Output
-
-After the pipeline finishes, it produces:
-
-```text
-data/processed/processed.csv
-```
-
-This represents the processed dataset, for example with missing values already filled in.
-
-### 8. Analysis Report Output
-
-After the pipeline finishes, it also produces:
-
-```text
-data/processed/report.json
-```
-
-This file currently contains:
-
-- the pipeline name `pipeline`
-- the steps actually executed `executed_steps`
-- a summary of artifacts generated by each step `artifacts`
-
-### 9. Command-Line Capabilities
-
-The framework currently supports 3 commands:
-
-- `run`
-- `validate`
-- `list-algorithms`
-
-## Usage
-
-### Install Dependencies
+### Install
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Validate the Configuration
+### Validate a Config
 
 ```bash
 python3 scripts/run_pipeline.py validate --config configs/pipelines/basic_analysis.yaml
+```
+
+### Run a Pipeline
+
+```bash
+python3 scripts/run_pipeline.py run --config configs/pipelines/basic_analysis.yaml
+```
+
+To run with JSON input instead:
+
+```bash
+python3 scripts/run_pipeline.py run --config configs/pipelines/json_analysis.yaml
 ```
 
 ### List Available Algorithms
@@ -344,61 +51,59 @@ python3 scripts/run_pipeline.py validate --config configs/pipelines/basic_analys
 python3 scripts/run_pipeline.py list-algorithms
 ```
 
-### Run the Analysis Pipeline
+## Output
 
-```bash
-python3 scripts/run_pipeline.py run --config configs/pipelines/basic_analysis.yaml
-```
+After a pipeline run you get:
 
-To run the same analysis flow with `JSON` input:
+| File | Description |
+|------|-------------|
+| `data/processed/processed.csv` | Cleaned dataset (e.g. missing values filled) |
+| `data/processed/report.json` | Structured analysis report |
 
-```bash
-python3 scripts/run_pipeline.py run --config configs/pipelines/json_analysis.yaml
-```
+## Built-in Algorithms
 
-### Inspect the Results
+| Algorithm | Purpose |
+|-----------|---------|
+| `missing_values` | Fill missing values (currently supports mean imputation) |
+| `descriptive_stats` | Count, min, max, mean for numeric columns |
+| `categorical_frequency` | Value counts and top-N frequencies for categorical columns |
+| `correlation` | Pearson correlation matrix for numeric columns |
 
-After running, you will have:
+## Configuration
 
-- [example.csv](/Users/a1-6/Analysis-Framework/data/raw/example.csv) or [example.json](/Users/a1-6/Analysis-Framework/data/raw/example.json)
-- [processed.csv](/Users/a1-6/Analysis-Framework/data/processed/processed.csv)
-- [report.json](/Users/a1-6/Analysis-Framework/data/processed/report.json)
+Pipelines are defined in YAML config files under `configs/pipelines/`. Each config specifies:
 
-Their relationship is:
+- input file path and format
+- which steps to run and their parameters
+- output directory
 
-- `example.csv` or `example.json` is the raw data
-- `processed.csv` is the processed data
-- `report.json` is the analysis summary
+See `configs/pipelines/basic_analysis.yaml` for a working example.
 
-## Current Test Status
+## Directory Structure
 
-There are already basic tests:
-
-- [test_registry.py](/Users/a1-6/Analysis-Framework/tests/test_registry.py)
-- [test_pipeline.py](/Users/a1-6/Analysis-Framework/tests/test_pipeline.py)
-
-Verified locally with:
-
-```bash
-python3 -m pytest -q
+```text
+Analysis-Framework/
+├── configs/               # Pipeline configuration files
+│   └── pipelines/
+├── data/
+│   ├── raw/               # Input data
+│   └── processed/         # Output data and reports
+├── examples/              # Usage examples
+├── scripts/               # CLI entry points
+├── src/analysis_framework/
+│   ├── algorithms/        # Built-in analysis algorithms
+│   ├── config/            # Config loading and validation
+│   ├── core/              # Pipeline orchestration
+│   └── dataio/            # Data readers and writers
+└── tests/
 ```
 
 ## Current Limitations
 
-This is still a minimal version, with the following limitations:
+- Only CSV, JSON, XLSX, and SQLite inputs are supported
+- 4 built-in algorithms; descriptive statistics are still basic
+- No visualization output yet
 
-- only `CSV`, row-oriented `JSON`, basic `XLSX`, and `SQLite` input are supported
-- there are only 4 built-in algorithms
-- descriptive statistics are still basic
-- there is no visualization output yet
-- there is no plugin system or broader data source support yet
+## License
 
-## Good Next Expansion Directions
-
-Suitable next steps for the project include:
-
-1. missing rate statistics
-2. median, standard deviation, and quantiles
-3. normalization / standardization
-4. outlier detection
-5. broader database and API input support
+See [LICENSE](./LICENSE).
